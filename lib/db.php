@@ -23,7 +23,42 @@ function run_query($dbconn, $query) {
 }
 
 //database functions
-function get_article_list($dbconn){
+
+function get_article_list($dbconn,$username){
+	
+	
+	$role = pg_prepare($dbconn,"","select role from authors where username =$1");
+	$role = pg_execute($dbconn,"",array($username));
+	
+	
+	
+	if ($role =='admin'){
+		$result = pg_prepare($dbconn,"","select articles.created_on as date,
+		articles.aid as aid,
+		articles.title as title,
+		authors.username as author,
+		articles.stub as stub
+		FROM articles INNER JOIN authors ON
+		articles.author = authors.id
+		ORDER BY date DESC");
+		$result = pg_execute($dbconn,"",array());
+		return $result;
+	}
+	else {
+		$result = pg_prepare($dbconn,"","select articles.created_on as date,
+		articles.aid as aid,
+		articles.title as title,
+		articles.author as author,
+		articles.stub as stub
+		FROM articles INNER JOIN authors ON
+		articles.author = authors.id
+		where authors.role = $1
+		ORDER BY date DESC");
+		$result = pg_execute($dbconn,"",array($role));
+		return $result;
+	}
+}
+function get_article_listIndex($dbconn){
 	$query= 
 		"SELECT 
 		articles.created_on as date,
@@ -37,7 +72,7 @@ function get_article_list($dbconn){
 		authors ON articles.author=authors.id
 		ORDER BY
 		date DESC";
-return run_query($dbconn, $query);
+	return run_query($dbconn, $query);
 }
 
 function get_article($dbconn, $aid) {

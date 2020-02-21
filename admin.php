@@ -21,7 +21,9 @@ New Post <span class="fa fa-plus" aria-hidden="true"></span>
 
 <?php
 # get articles by user or, if role is admin, all articles
-		$result = get_article_list($dbconn);
+
+		$result = get_article_list($dbconn,'username');
+		
 		while ($row = pg_fetch_array($result)) {
 	?>
 <tr>

@@ -67,13 +67,11 @@ function delete_article($dbconn, $aid) {
 function add_article($dbconn, $title, $content, $author) {
 	$stub = substr($content, 0, 30);
 	$aid = str_replace(" ", "-", strtolower($title));
-	$query="
-		INSERT INTO
-		articles
-		(aid, title, author, stub, content) 
-		VALUES
-		('$aid', '$title', $author, '$stub', '$content')";
-	return run_query($dbconn, $query);
+	$result = pg_prepare($dbconn,"","insert into articles(aid, title, author, stub, content)
+		values($1,$2,$3,$4,$5)");
+	$result = pg_execute($dbconn,"",array(htmlspecialchars($aid),htmlspecialchars($title),
+		htmlspecialchars($author),htmlspecialchars($stub),htmlspecialchars($content)));
+	return $result;
 }
 
 function update_article($dbconn, $title, $content, $aid) {

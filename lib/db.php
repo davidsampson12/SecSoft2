@@ -41,27 +41,24 @@ return run_query($dbconn, $query);
 }
 
 function get_article($dbconn, $aid) {
-	$query= 
-		"SELECT 
-		articles.created_on as date,
+			
+	$result = pg_prepare($dbconn,"","select articles.created_on as date,
 		articles.aid as aid,
 		articles.title as title,
 		authors.username as author,
 		articles.stub as stub,
-		articles.content as content
-		FROM 
-		articles
-		INNER JOIN
-		authors ON articles.author=authors.id
-		WHERE
-		aid='".$aid."'
-		LIMIT 1";
-return run_query($dbconn, $query);
+		articles.content as content FROM articles INNER JOIN authors ON articles.author=authors.id
+		WHERE aid=$1 LIMIT 1");
+	$result = pg_execute($dbconn,"",array(htmlspecialchars($aid)));
+	return $result;
 }
 
 function delete_article($dbconn, $aid) {
 	$query= "DELETE FROM articles WHERE aid='".$aid."'";
-	return run_query($dbconn, $query);
+	
+	$result = pg_prepare($dbconn,"","DELETE FROM articles WHERE aid=$1");
+	$result = pg_execute($dbconn,"",array(htmlspecialchars($aid)));
+	return $result;
 }
 
 function add_article($dbconn, $title, $content, $author) {

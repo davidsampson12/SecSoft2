@@ -4,6 +4,7 @@
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$username = 'username';
 	$password = 'password';
+	echo trim($password, '"');
 	$result = authenticate_user($dbconn, $_POST[$username], $_POST[$password]);
 	if (pg_num_rows($result) == 1) {
 		$_SESSION['username'] = $_POST['username'];

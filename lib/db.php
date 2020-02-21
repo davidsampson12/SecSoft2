@@ -88,19 +88,13 @@ function update_article($dbconn, $title, $content, $aid) {
 }
 
 function authenticate_user($dbconn, $username, $password) {
-	$query=
-		"SELECT
-		authors.id as id,
-		authors.username as username,
-		authors.password as password,
-		authors.role as role
-		FROM
-		authors
-		WHERE
-		username='".$_POST['username']."'
-		AND
-		password='".$_POST['password']."'
-		LIMIT 1";
-	return run_query($dbconn, $query);
+	
+	
+	$result = pg_prepare($dbconn,"",'select authors.id as id,
+        authors.username as username,
+        authors.password as password,
+        authors.role as role from authors where username = $1 AND password=$2');
+    return     pg_execute($dbconn,"auth",array($username,$password));
+	
 }	
 ?>

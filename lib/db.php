@@ -26,7 +26,7 @@ function run_query($dbconn, $query) {
 
 function get_article_list($dbconn,$username){
 	
-	
+	/*
 	$role = pg_prepare($dbconn,"","select role from authors where username =$1");
 	$role = pg_execute($dbconn,"",array($username));
 	
@@ -57,6 +57,22 @@ function get_article_list($dbconn,$username){
 		$result = pg_execute($dbconn,"",array($role));
 		return $result;
 	}
+	*/
+	
+	$query= 
+		"SELECT 
+		articles.created_on as date,
+		articles.aid as aid,
+		articles.title as title,
+		authors.username as author,
+		articles.stub as stub
+		FROM
+		articles
+		INNER JOIN
+		authors ON articles.author=authors.id
+		ORDER BY
+		date DESC";
+	return run_query($dbconn, $query);
 }
 function get_article_listIndex($dbconn){
 	$query= 
@@ -89,7 +105,7 @@ function get_article($dbconn, $aid) {
 }
 
 function delete_article($dbconn, $aid) {
-	
+	$username = $_SESSION['username'];
 	$result = articleLog($dbconn,"deleted article",$username,$aid);
 	$result = pg_prepare($dbconn,"","DELETE FROM articles WHERE aid=$1");
 	$result = pg_execute($dbconn,"",array(htmlspecialchars($aid)));

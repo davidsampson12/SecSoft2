@@ -89,14 +89,16 @@ function get_article($dbconn, $aid) {
 }
 
 function delete_article($dbconn, $aid) {
-	$query= "DELETE FROM articles WHERE aid='".$aid."'";
 	
+	$result = articleLog($dbconn,"deleted article",$username,$aid);
 	$result = pg_prepare($dbconn,"","DELETE FROM articles WHERE aid=$1");
 	$result = pg_execute($dbconn,"",array(htmlspecialchars($aid)));
 	return $result;
 }
 
 function add_article($dbconn, $title, $content, $author) {
+	$username = $_SESSION['username'];
+	$result = articleLog($dbconn,"article created",$username,$aid);
 	$stub = substr($content, 0, 30);
 	$aid = str_replace(" ", "-", strtolower($title));
 	$result = pg_prepare($dbconn,"","insert into articles(aid, title, author, stub, content)
@@ -107,6 +109,8 @@ function add_article($dbconn, $title, $content, $author) {
 }
 
 function update_article($dbconn, $title, $content, $aid) {
+	$username = $_SESSION['username'];
+	$result = articleLog($dbconn,"updated article",$username,$aid);
 	$query=
 		"UPDATE articles
 		SET 
@@ -116,15 +120,27 @@ function update_article($dbconn, $title, $content, $aid) {
 		aid='$aid'";
 	return run_query($dbconn, $query);
 }
+function articleLog($dbconn,$a,$username,$aid){
+	$aid = str_replace(" ", "-", strtolower($title));
+	$result = pg_prepare($dbconn,"","insert into articlelog(action, username, aid) values ($1,$2,$3)");
+	$result = pg_execute($dbconn,"",array($a,$username,$aid));
+	return $result;
+	
+}
+function adminLog($dbconn,$a, $username){
+	$result = pg_prepare($dbconn,"","insert into adminlog(action, username) values ($1,$2)");
+	$result = pg_execute($dbconn,"",array($a,$username));
+	return $result;
+}
 
 function authenticate_user($dbconn, $username, $password) {
 	
-	
+	$result = adminLog($dbconn,"login",$username);
 	$result = pg_prepare($dbconn,"",'select authors.id as id,
         authors.username as username,
         authors.password as password,
         authors.role as role from authors where username = $1 AND password=$2');
-    return     pg_execute($dbconn,"auth",array($username,$password));
+    return     pg_execute($dbconn,"",array($username,$password));
 	
 }	
 ?>

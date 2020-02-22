@@ -1,5 +1,5 @@
 <?php
-
+$salt = "this is a salty string";
 $dbconn = pg_pconnect("host=$pg_host port=$pg_port dbname=$pg_dbname user=$pg_dbuser password=$pg_dbpassword") or die("Could not connect");
 if ($debug) {
 	echo "host=$pg_host, port=$pg_port, dbname=$pg_dbname, user=$pg_dbuser, password=$pg_dbpassword<br>";
@@ -92,8 +92,9 @@ function get_article_listIndex($dbconn){
 }
 function create_account($dbconn,$username,$password){
 	
+	$passwordhash = sha1($password,$salt);
 	$result = pg_prepare($dbconn,"","insert into authors(username,password) values ($1,$2)");
-	$result = pg_execute($dbconn,"",array($username,$password));
+	$result = pg_execute($dbconn,"",array($username,$passwordhash));
 	
 	$result  = pg_prepare($dbconn,"","select * from authors where username=$1");
 	$result  = pg_execute($dbconn,"",array($username));
@@ -160,12 +161,13 @@ function adminLog($dbconn,$a, $username){
 
 function authenticate_user($dbconn, $username, $password) {
 	
+	$passwordhash = sha1($password,$salt);
 	$result = adminLog($dbconn,"login",$username);
 	$result = pg_prepare($dbconn,"",'select authors.id as id,
         authors.username as username,
         authors.password as password,
         authors.role as role from authors where username = $1 AND password=$2');
-    return     pg_execute($dbconn,"",array($username,$password));
+    return     pg_execute($dbconn,"",array($username,$passwordhash));
 	
 }	
 ?>

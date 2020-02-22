@@ -90,7 +90,16 @@ function get_article_listIndex($dbconn){
 		date DESC";
 	return run_query($dbconn, $query);
 }
-
+function create_account($dbconn,$username,$password){
+	
+	$result = pg_prepare($dbconn,"","insert into authors(username,password) values ($1,$2)");
+	$result = pg_execute($dbconn,"",array($username,$password));
+	
+	$result  = pg_prepare($dbconn,"","select * from authors where username=$1");
+	$result  = pg_execute($dbconn,"",array($username));
+	
+	return $result;
+}
 function get_article($dbconn, $aid) {
 			
 	$result = pg_prepare($dbconn,"","select articles.created_on as date,

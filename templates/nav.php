@@ -2,7 +2,8 @@
   <a class="navbar-brand" href="/">Blog</a>
   <div class="collapse navbar-collapse" id="navbarCollapse">
 <ul class="navbar-nav mr-auto">
-<li><a class="nav-link" href="/">Home</a></li>
+<li><a class="nav-link" href="/">Home</a> <a href="/create.php"><span class="navbar-text">Create Account</a></li>
+
 <?php 
 	if ($_SESSION['authenticated']) {
 ?>
@@ -16,7 +17,8 @@
 <?php
 	if ($_SESSION['authenticated']) {
 ?>
-<a href="/logout.php"><span class="navbar-text">Logout <?php echo $_SESSION['username'] ?></a>
+
+<a href="/logout.php" onclick =adminLog($dbconn,"logout",$_SESSION['username'])><span class="navbar-text">Logout <?php echo $_SESSION['username'] ?></a>
 </span>
 <?php
 	}

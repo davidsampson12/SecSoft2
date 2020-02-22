@@ -1,0 +1,21 @@
+Reasons for extensive deletes/uploads/moves 
+
+---DISCLAIMER---Github claimed there were differences between David Sampson laptop and origin master however pull requests could not fix. 
+Ended up uploading files manually and then had to move them around to maintain the file structure.
+
+Feb 21 2020
+
+SQl INJECTION and XSS fully fixed
+
+FEB 22 2020 
+
+logging enabled for article creation and user actions
+
+Https enabled
+
+hashing /salting of passwords in database enabled
+
+added user creation. 
+
+access control lists - partially enabled (could not get code to work on machine) tested on
+other machines with varying sucess. 
